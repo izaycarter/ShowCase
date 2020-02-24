@@ -1,7 +1,10 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.Data;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Kopis_Showcase.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -25,65 +28,87 @@ namespace Kopis_Showcase.Controllers
             return View();
         }
 
-      
-        public ActionResult OnPostImport(IFormFile file)
+        private Person CreatePerson(IRow row, out Person person)
         {
-            
-            string folderName = "Upload";
-            string webRootPath = _env.WebRootPath;
-            string newPath = Path.Combine(webRootPath, folderName);
-            StringBuilder sb = new StringBuilder();
-            if (!Directory.Exists(newPath))
+            person = new Person();
+
+            for (int i = row.FirstCellNum; i <= row.LastCellNum; i++)
             {
-                Directory.CreateDirectory(newPath);
-            }
-            if (file.Length > 0)
-            {
-                string sFileExtension = Path.GetExtension(file.FileName).ToLower();
-                ISheet sheet;
-                string fullPath = Path.Combine(newPath, file.FileName);
-                using (var stream = new FileStream(fullPath, FileMode.Create))
-                {
-                    file.CopyTo(stream);
-                    stream.Position = 0;
-                    if (sFileExtension == ".xls")
+                ICell cell = row.GetCell(i);
+                if(i == 0) { person.FirstName = cell.ToString(); }
+
+                if (i == 1) { person.LastName = cell.ToString(); }
+
+                if (i == 2) {
+                    if (cell.ToString() == "Female")
                     {
-                        HSSFWorkbook hssfwb = new HSSFWorkbook(stream); //This will read the Excel 97-2000 formats  
-                        sheet = hssfwb.GetSheetAt(0); //get first sheet from workbook  
+                        person.GenderID = 1;
+
+                    } if(cell.ToString() == "Male")
+                    {
+                        person.GenderID = 2;
                     }
                     else
                     {
-                        XSSFWorkbook hssfwb = new XSSFWorkbook(stream); //This will read 2007 Excel format  
-                        sheet = hssfwb.GetSheetAt(0); //get first sheet from workbook   
+                        person.GenderID = 3;
                     }
-                    IRow headerRow = sheet.GetRow(0); //Get Header Row
-                    int cellCount = headerRow.LastCellNum;
-                    sb.Append("<table class='table'><tr>");
-                    for (int j = 0; j < cellCount; j++)
-                    {
-                        ICell cell = headerRow.GetCell(j);
-                        if (cell == null || string.IsNullOrWhiteSpace(cell.ToString())) continue;
-                        sb.Append("<th>" + cell.ToString() + "</th>");
-                    }
-                    sb.Append("</tr>");
-                    sb.AppendLine("<tr>");
-                    for (int i = (sheet.FirstRowNum + 1); i <= sheet.LastRowNum; i++) //Read Excel File
-                    {
-                        IRow row = sheet.GetRow(i);
-                        if (row == null) continue;
-                        if (row.Cells.All(d => d.CellType == CellType.Blank)) continue;
-                        for (int j = row.FirstCellNum; j < cellCount; j++)
-                        {
-                            if (row.GetCell(j) != null)
-                                sb.Append("<td>" + row.GetCell(j).ToString() + "</td>");
-                        }
-                        sb.AppendLine("</tr>");
-                    }
-                    sb.Append("</table>");
+                    
                 }
+
+                if (i == 3) { person.DateOfBirth = cell.ToString(); }
+
+                if (i == 4) { person.MaritalStatus.MaritalStatusName = cell.ToString(); }
+
+                if (i == 5) { person.EmailAddress = cell.ToString(); }
+
+                if (i == 6) { person.StreetAddressLine1 = cell.ToString(); }
+
+                if (i == 7) { person.StreetAddressLine2 = cell.ToString(); }
+
+                if (i == 8) { person.PhoneNumber = cell.ToString(); }
+
+                if (i == 9) { person.City = cell.ToString(); }
+
+                if (i == 10) { person.State = cell.ToString(); }
+
+                if (i == 11) { person.Zip = cell.ToString(); }
+
             }
-            return Content(sb.ToString());
+
+            return person;
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult OnPostImport(IFormFile upfile)
+          {
+            string folderName = "Upload";
+            string webRootPath = _env.WebRootPath;
+            string newPath = Path.Combine(webRootPath, folderName);
+            string nameofFile = upfile.FileName;
+            string fullPath = Path.Combine(newPath, nameofFile);
+
+
+            XSSFWorkbook hssfworkbook;
+             using (var stream = new FileStream(fullPath, FileMode.Open, FileAccess.Read))
+             {
+                upfile.CopyTo(stream);
+                stream.Position = 0;
+                hssfworkbook = new XSSFWorkbook(stream);
+            }
+             ISheet sheet = hssfworkbook.GetSheetAt(0);
+             var people = new List<Person>();
+
+            for(int i = sheet.FirstRowNum + 1; i <= sheet.LastRowNum; i++)
+            {
+                IRow row = sheet.GetRow(i);
+                CreatePerson(row, out Person person);
+                people.Add(person);
+        
+            }
+
+            return View("Index", people);
+         }
 
         public async Task<IActionResult> OnPostExport()
         {

@@ -16,7 +16,7 @@ namespace Kopis_Showcase.Models
         public Gender Gender { get; set; }
 
         [DataType(DataType.Date)]
-        public DateTime DateOfBirth { get; set; }
+        public string DateOfBirth { get; set; }
 
         [Display(Name = "MaritalStatus")]
         public int MaritalStatusID { get; set; }

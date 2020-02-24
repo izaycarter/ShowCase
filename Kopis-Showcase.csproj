@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />
-    <Folder Include="Views\Person %28copy%29\" />
+    <Folder Include="Views\Person\" />
     <Folder Include="Views\ImportExport\" />
   </ItemGroup>
 </Project>

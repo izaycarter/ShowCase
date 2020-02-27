@@ -23,8 +23,15 @@
     <Folder Include="Data\" />
     <Folder Include="Views\Person\" />
     <Folder Include="wwwroot\uploads\" />
+    <Folder Include="Css\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Controllers\ImportExportController.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="wwwroot\css\Home.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="wwwroot\css\Home.css" />
   </ItemGroup>
 </Project>

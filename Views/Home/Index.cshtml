@@ -2,28 +2,31 @@
 @{
     Layout = "_Layout";
 }
+@section usage{
+    <link href="~/css/Home.css" rel="stylesheet" />
+}
 <!DOCTYPE html>
 
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-
+   
 
 </head>
 <body>
-    <h2>Welcome</h2>
-    <p>Please select an excel file to Import</p>
+    <h2 class="Home-title d-flex justify-content-center">Welcome</h2>
+    <p class="d-flex form-detail">Select the excel(.xlxs) file you would like to Upload</p>
     <form method="post" enctype="multipart/form-data" asp-action="Index">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <input type="file" name="Upload" class="form-control" />
             </div>
-            <div class="pt-2-sm col-md-8">
+            <div class="col-md-6">
                 <input type="submit" value="Upload" />
             </div>
         </div>
     </form>
-    
+
 
 </body>
 </html>

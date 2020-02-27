@@ -118,11 +118,7 @@ namespace Kopis_Showcase.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(UploadFile file)
         {
-            string extension = Path.GetExtension(file.Upload.FileName);
-            try
-            {
-                if (extension == ".xlxs")
-                {
+            
                     var filepath = Path.Combine(_env.ContentRootPath, "wwwroot/uploads", file.Upload.FileName);
                     using (var fileStream = new FileStream(filepath, FileMode.Create))
                     {
@@ -147,13 +143,7 @@ namespace Kopis_Showcase.Controllers
                         _context.Add(person);
                     }
                     await _context.SaveChangesAsync();
-                }
                 
-            }
-            catch (Exception)
-            {
-                
-            }
 
             
             return View();

@@ -1,0 +1,11 @@
+﻿body {
+}
+.Home-title {
+    font-size: 5rem ;
+}
+.form-detail {
+    font-size: 2rem;
+    display: flex;
+    justify-content: space-around;
+}
+

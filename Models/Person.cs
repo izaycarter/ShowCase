@@ -16,21 +16,20 @@ namespace Kopis_Showcase.Models
         public Gender Gender { get; set; }
 
         [DataType(DataType.Date)]
-        public string DateOfBirth { get; set; }
+        public DateTime DateOfBirth { get; set; }
 
         [Display(Name = "MaritalStatus")]
         public int MaritalStatusID { get; set; }
 
         public MaritalStatus MaritalStatus { get; set; }
 
-        [DataType(DataType.EmailAddress)]
+        
         public string EmailAddress { get; set; }
 
         public string StreetAddressLine1 { get; set; }
 
         public string StreetAddressLine2 { get; set; }
 
-        [StringLength(10)]
         public string PhoneNumber { get; set; }
 
         public string City { get; set; }

@@ -30,14 +30,18 @@ namespace Kopis_Showcase.Controllers
             string sortOrder,
             string currentFilter,
             string searchString,
-            int? pageNumber)
+            int? pageNumber,
+            string pageSizeFilter)
         {
 
             ViewData["CurrentSort"] = sortOrder;
-
             ViewData["FirstNameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "firstname_desc" : "";
             ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
             ViewData["LastNameSortParm"] = sortOrder == "LastName" ? "LastName_desc" : "LastName";
+
+            ViewData["10"] = pageSizeFilter == "25" ? "10" : pageSizeFilter == "50" ? "10" : "10";
+            ViewData["25"] = String.IsNullOrEmpty(pageSizeFilter) ? "25" : pageSizeFilter == "50" ? "25" : pageSizeFilter == "10" ? "25" : "25";
+            ViewData["50"] = String.IsNullOrEmpty(pageSizeFilter) ? "50" : pageSizeFilter == "25" ? "50" : pageSizeFilter == "10" ? "50" : "50";
 
             if (searchString != null)
             {
@@ -83,8 +87,29 @@ namespace Kopis_Showcase.Controllers
             }
 
 
+            int pageSize;
 
-            int pageSize = 10;
+            
+            switch (pageSizeFilter)
+            {
+                
+                case "10":
+                     pageSize = 10;
+                    break;
+                case "25":
+                     pageSize = 25;
+                    break;
+                case "50":
+                     pageSize = 50;
+                    break;
+                default:
+                    pageSize = 10;
+                    break;
+                
+            }
+           
+
+            
             return View(await PaginatedList<Person>.CreateAsync(people, pageNumber ?? 1, pageSize));
        
         }
@@ -270,11 +295,13 @@ namespace Kopis_Showcase.Controllers
             _ = string.Format("{0}://{1}/{2}", Request.Scheme, Request.Host, sFileName);
             _ = new FileInfo(Path.Combine(sWebRootFolder, sFileName));
             var memory = new MemoryStream();
+            var personContext = _context.Persons.Include(p => p.Gender).Include(p => p.MaritalStatus);
+            var people = from p in personContext
+                         select p;
             using (var fs = new FileStream(Path.Combine(sWebRootFolder, sFileName), FileMode.Create, FileAccess.Write))
             {
-               var personContext = _context.Persons;
-                var people = from p in personContext
-                             select p;
+               
+                
                 IWorkbook workbook;
                 workbook = new XSSFWorkbook();
                 ISheet excelSheet = workbook.CreateSheet("Person List");
@@ -300,7 +327,7 @@ namespace Kopis_Showcase.Controllers
                     row.CreateCell(0).SetCellValue(p.FirstName);
                     row.CreateCell(1).SetCellValue(p.LastName);
                     row.CreateCell(2).SetCellValue(p.Gender.GenderName);
-                    row.CreateCell(3).SetCellValue(p.DateOfBirth);
+                    row.CreateCell(3).SetCellValue(p.DateOfBirth.ToString("MM/dd/yyyy"));
                     row.CreateCell(4).SetCellValue(p.MaritalStatus.MaritalStatusName);
                     row.CreateCell(5).SetCellValue(p.EmailAddress);
                     row.CreateCell(6).SetCellValue(p.PhoneNumber);
@@ -311,7 +338,12 @@ namespace Kopis_Showcase.Controllers
                     row.CreateCell(11).SetCellValue(p.Zip);
                     index++;
                 }
-
+                excelSheet.AutoSizeColumn(0);
+                excelSheet.AutoSizeColumn(1);
+                excelSheet.AutoSizeColumn(2);
+                excelSheet.AutoSizeColumn(3);
+                excelSheet.AutoSizeColumn(7);
+                excelSheet.AutoSizeColumn(8);
                 workbook.Write(fs);
             }
             using (var stream = new FileStream(Path.Combine(sWebRootFolder, sFileName), FileMode.Open))

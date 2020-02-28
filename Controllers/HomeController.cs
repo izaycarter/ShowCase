@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using Kopis_Showcase.Data;
+using NPOI.HSSF.UserModel;
 
 namespace Kopis_Showcase.Controllers
 {
@@ -30,6 +31,7 @@ namespace Kopis_Showcase.Controllers
             return View();
         }
 
+        //Method To make each row to perosn model
         private Person CreatePerson(IRow row)
         {
             var person = new Person();
@@ -118,35 +120,77 @@ namespace Kopis_Showcase.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(UploadFile file)
         {
-            
-                    var filepath = Path.Combine(_env.ContentRootPath, "wwwroot/uploads", file.Upload.FileName);
-                    using (var fileStream = new FileStream(filepath, FileMode.Create))
-                    {
-                        await file.Upload.CopyToAsync(fileStream);
-                    }
 
-                    XSSFWorkbook hssfworkbook;
+            if (Path.GetExtension(file.Upload.FileName) == ".xlsx")
+            {
+                var filepath = Path.Combine(_env.ContentRootPath, "wwwroot/uploads", file.Upload.FileName);
+                using (var fileStream = new FileStream(filepath, FileMode.Create))
+                {
+                    await file.Upload.CopyToAsync(fileStream);
+                }
 
-                    using (var stream = new FileStream(filepath, FileMode.Open, FileAccess.ReadWrite))
-                    {
-                        await file.Upload.CopyToAsync(stream);
-                        stream.Position = 0;
-                        hssfworkbook = new XSSFWorkbook(stream);
-                    }
-                    ISheet sheet = hssfworkbook.GetSheetAt(0);
+                XSSFWorkbook xssfworkbook;
+
+                using (var stream = new FileStream(filepath, FileMode.Open, FileAccess.ReadWrite))
+                {
+                    await file.Upload.CopyToAsync(stream);
+                    stream.Position = 0;
+                    xssfworkbook = new XSSFWorkbook(stream);
+                }
+                ISheet sheet = xssfworkbook.GetSheetAt(0);
 
 
-                    for (int i = sheet.FirstRowNum + 1; i <= sheet.LastRowNum; i++)
-                    {
-                        IRow row = sheet.GetRow(i);
-                        var person = CreatePerson(row);
-                        _context.Add(person);
-                    }
-                    await _context.SaveChangesAsync();
-                
+                for (int i = sheet.FirstRowNum + 1; i <= sheet.LastRowNum; i++)
+                {
+                    IRow row = sheet.GetRow(i);
+                    var person = CreatePerson(row);
+                    _context.Add(person);
+                }
+                await _context.SaveChangesAsync();
 
-            
-            return View();
+
+
+                return View();
+            }
+
+            else if (Path.GetExtension(file.Upload.FileName) == ".xls")
+            {
+                var filepath = Path.Combine(_env.ContentRootPath, "wwwroot/uploads", file.Upload.FileName);
+                using (var fileStream = new FileStream(filepath, FileMode.Create))
+                {
+                    await file.Upload.CopyToAsync(fileStream);
+                }
+
+
+                HSSFWorkbook hssfworkbook;
+
+                using (var stream = new FileStream(filepath, FileMode.Open, FileAccess.ReadWrite))
+                {
+                    await file.Upload.CopyToAsync(stream);
+                    stream.Position = 0;
+                    hssfworkbook = new HSSFWorkbook(stream);
+                }
+                ISheet sheet = hssfworkbook.GetSheetAt(0);
+
+
+                for (int i = sheet.FirstRowNum + 1; i <= sheet.LastRowNum; i++)
+                {
+                    IRow row = sheet.GetRow(i);
+                    var person = CreatePerson(row);
+                    _context.Add(person);
+                }
+                await _context.SaveChangesAsync();
+
+
+
+                return View();
+            }
+
+            else 
+            {
+                return View();
+            }
+  
         }
 
        

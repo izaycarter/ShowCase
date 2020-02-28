@@ -13,7 +13,12 @@ namespace Kopis_Showcase.Models
          
         public IFormFile Upload { get; set; }
 
+        public string ErrorMessage = "please select an excel file ending with .xlxs";
 
-        
+        public bool Wrongtype
+        {
+            get;
+        }
+
     }
 }

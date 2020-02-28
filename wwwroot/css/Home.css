@@ -9,3 +9,8 @@
     justify-content: space-around;
 }
 
+@media (max-width: 767px){
+    .upload-btn{
+        padding-top: 20px;
+    }
+}

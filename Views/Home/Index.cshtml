@@ -10,19 +10,20 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-   
+
 
 </head>
 <body>
     <h2 class="Home-title d-flex justify-content-center">Welcome</h2>
-    <p class="d-flex form-detail">Select the excel(.xlxs) file you would like to Upload</p>
-    <form method="post" enctype="multipart/form-data" asp-action="Index">
+    <p class="d-flex form-detail">Select the excel file you would like to Upload</p>
+    <form method="post" enctype="multipart/form-data" onchange="" asp-action="Index">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-6 d-flex">
                 <input type="file" name="Upload" class="form-control" />
             </div>
-            <div class="col-md-6">
-                <input type="submit" value="Upload" />
+            <p id="error"></p>
+            <div class="col-md-6 justify-content-center d-flex upload-btn">
+                <input type="submit" value="Upload" disabled />
             </div>
         </div>
     </form>
@@ -30,4 +31,17 @@
 
 </body>
 </html>
+
+@section Scripts{
+<script type="text/javascript">
+    $(document).ready(
+        function () {
+            $('input:file').change(
+                function () {
+                    $('input:submit').attr('disabled', false);
+                })
+        });
+</script>
+    
+}
 

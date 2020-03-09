@@ -18,15 +18,18 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="NPOI" Version="2.4.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.1" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />
     <Folder Include="Views\Person\" />
     <Folder Include="wwwroot\uploads\" />
-    <Folder Include="Css\" />
+    <Folder Include="Interface\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Controllers\ImportExportController.cs" />
+    <Compile Remove="Data\IPersonRepository.cs" />
+    <Compile Remove="Data\IEntity.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="wwwroot\css\Home.css" />

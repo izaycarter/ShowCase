@@ -11,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Kopis_Showcase.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
+using Kopis_Showcase.Models;
 
 namespace Kopis_Showcase
 {
@@ -27,9 +28,12 @@ namespace Kopis_Showcase
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddDbContext<PersonContext>(options =>
+            services.AddDbContext<SqlDbContext>(options =>
         options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            
+            services.AddTransient<IPerson, IPersonRepository>();
+            services.AddTransient<IUploadFile, IUploadFileRepository>();
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

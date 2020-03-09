@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Kopis_Showcase.Data
 {
-    public class PersonContext : DbContext
+    public class SqlDbContext : DbContext
     {
-        public PersonContext(DbContextOptions<PersonContext> options) : base(options)
+        public SqlDbContext(DbContextOptions<SqlDbContext> options) : base(options)
         {
         }
 

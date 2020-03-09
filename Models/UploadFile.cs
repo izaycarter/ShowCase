@@ -8,9 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Kopis_Showcase.Models
 {
     public class UploadFile
-    {
-
-         
+    { 
         public IFormFile Upload { get; set; }
 
         public string ErrorMessage = "please select an excel file ending with .xlxs";

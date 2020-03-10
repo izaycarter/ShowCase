@@ -1,17 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Kopis_Showcase.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Http;
-using Kopis_Showcase.Models;
+using Kopis_Showcase.Interface;
+using Kopis_Showcase.Repositories;
 
 namespace Kopis_Showcase
 {
@@ -30,8 +25,8 @@ namespace Kopis_Showcase
             services.AddControllersWithViews();
             services.AddDbContext<SqlDbContext>(options =>
         options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddTransient<IPerson, IPersonRepository>();
-            services.AddTransient<IUploadFile, IUploadFileRepository>();
+            services.AddTransient<IPersonRepository,  PersonRepository>();
+            services.AddTransient<IUploadFileRepository, UploadFileRepository>();
 
 
         }

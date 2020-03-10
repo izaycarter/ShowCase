@@ -2,18 +2,19 @@
 using System.IO;
 using Kopis_Showcase.Data;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+using Kopis_Showcase.Interface;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
+using Kopis_Showcase.Models;
 
-namespace Kopis_Showcase.Models
+namespace Kopis_Showcase.Repositories
 {
-    public class IUploadFileRepository : IUploadFile
+    public class UploadFileRepository : IUploadFileRepository
     {
         private IWebHostEnvironment _env;
         private readonly SqlDbContext context;
 
-        public IUploadFileRepository(IWebHostEnvironment env, SqlDbContext context)
+        public UploadFileRepository(IWebHostEnvironment env, SqlDbContext context)
         {
             _env = env;
             this.context = context;

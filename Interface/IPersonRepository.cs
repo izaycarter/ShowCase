@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using NPOI.SS.UserModel;
+using Kopis_Showcase.Models;
 
-namespace Kopis_Showcase.Models
+namespace Kopis_Showcase.Interface
 {
-    public interface IPerson
+    public interface IPersonRepository
     {
         IQueryable<Person> GetPeople();
         Person GetPerson(int? Id);

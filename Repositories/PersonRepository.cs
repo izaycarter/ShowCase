@@ -1,18 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Kopis_Showcase.Data;
 using Microsoft.EntityFrameworkCore;
-using NPOI.SS.UserModel;
+using Kopis_Showcase.Interface;
+using Kopis_Showcase.Models;
 
-namespace Kopis_Showcase.Models
+namespace Kopis_Showcase.Repositories
 {
-    public class IPersonRepository : IPerson
+    public class PersonRepository : IPersonRepository
     {
 
         private readonly SqlDbContext context;
 
-        public IPersonRepository(SqlDbContext context)
+        public PersonRepository(SqlDbContext context)
         {
             this.context = context;
         }

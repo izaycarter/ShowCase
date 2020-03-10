@@ -25,6 +25,7 @@
     <Folder Include="Views\Person\" />
     <Folder Include="wwwroot\uploads\" />
     <Folder Include="Interface\" />
+    <Folder Include="Repositories\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Controllers\ImportExportController.cs" />

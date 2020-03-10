@@ -4,16 +4,14 @@
     Layout = "_Layout";
 }
 
-<!DOCTYPE html>
 
-<body>
     <div>
         <h4>@Html.DisplayFor(model => model.FirstName) @Html.DisplayFor(model => model.LastName)</h4>
         <hr />
         <div class="row">
             <div class="col-sm-12 gutters">
-                <div class="row">
-                    <div class="col-sm-12 col-md-6">
+                <div class="row justify-content-between">
+                    <div class="col-sm-12 col-md-5">
                         <p class="col" >
                             @Html.DisplayNameFor(model => model.Gender)
                         </p>
@@ -21,7 +19,7 @@
                             @Html.DisplayFor(model => model.Gender.GenderName)
                         </p>
                     </div>
-                    <div class="col-sm-12 col-md-6">
+                    <div class="col-sm-12 col-md-5">
                         <p class="col">
                             @Html.DisplayNameFor(model => model.DateOfBirth)
                         </p>
@@ -30,8 +28,8 @@
                         </p>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-sm-12 col-md-6">
+                <div class="row justify-content-between">
+                    <div class="col-sm-12 col-md-5">
                         <p class="col">
                             @Html.DisplayNameFor(model => model.MaritalStatus)
                         </p>
@@ -39,7 +37,7 @@
                             @Html.DisplayFor(model => model.MaritalStatus.MaritalStatusName)
                         </p>
                     </div>
-                    <div class="col-sm-12 col-md-6">
+                    <div class="col-sm-12 col-md-5">
                         <p class="col">
                             @Html.DisplayNameFor(model => model.EmailAddress)
                         </p>
@@ -49,8 +47,8 @@
 
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-sm-12 col-md-6">
+                <div class="row justify-content-between">
+                    <div class="col-sm-12 col-md-5">
                         <p class="col">
                             @Html.DisplayNameFor(model => model.StreetAddressLine1)
                         </p>
@@ -58,7 +56,7 @@
                             @Html.DisplayFor(model => model.StreetAddressLine1)
                         </p>
                     </div>
-                    <div class="col-sm-12 col-md-6">
+                    <div class="col-sm-12 col-md-5">
                         <p class="col">
                             @Html.DisplayNameFor(model => model.StreetAddressLine2)
                         </p>
@@ -67,8 +65,8 @@
                         </p>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-sm-12 col-md-6">
+                <div class="row justify-content-between">
+                    <div class="col-sm-12 col-md-5">
                         <p class="col">
                             @Html.DisplayNameFor(model => model.PhoneNumber)
                         </p>
@@ -76,7 +74,7 @@
                             @Html.DisplayFor(model => model.PhoneNumber)
                         </p>
                     </div>
-                    <div class="col-sm-12 col-md-6">
+                    <div class="col-sm-12 col-md-5">
                         <p class="col">
                             @Html.DisplayNameFor(model => model.City)
                         </p>
@@ -85,8 +83,8 @@
                         </p>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-sm-12 col-md-6">
+                <div class="row justify-content-between">
+                    <div class="col-sm-12 col-md-5">
                         <p class="col">
                             @Html.DisplayNameFor(model => model.State)
                         </p>
@@ -94,7 +92,7 @@
                             @Html.DisplayFor(model => model.State)
                         </p>
                     </div>
-                    <div class="col-sm-12 col-md-6">
+                    <div class="col-sm-12 col-md-5">
                         <p class="col">
                             @Html.DisplayNameFor(model => model.Zip)
                         </p>
@@ -103,7 +101,7 @@
                         </p>
                     </div>
                 </div>
-                <div class="row">
+                <div class="col-sm-12">
                     <a asp-action="Edit" asp-route-id="@Model.PersonID">Edit</a> |
                     <a asp-action="Delete" asp-route-id="@Model.PersonID">Delete</a> |
                     <a asp-action="Index">Back to List</a>
@@ -111,4 +109,3 @@
             </div>
         </div>
     </div>
-</body>

@@ -20,11 +20,12 @@
         <div class="form-actions no-color">
             <p>
                 Find by name: <input type="text" name="SearchString" value="@ViewData["currentFilter"]" placeholder="Enter first or last name" />
-                <input type="submit" value="Search" class="btn btn-default" /> |
+                <input type="submit" value="Search" class="btn-primary" /> |
                 <a asp-action="Index">Back to Full List</a> |
-                Page Length: <a asp-action="Index" asp-route-pageSizeFilter="@ViewData["10"]">10</a> <a asp-action="Index" asp-route-pageSizeFilter="@ViewData["25"]">25</a> <a asp-action="Index" asp-route-pageSizeFilter="@ViewData["50"]">50</a>
 
-
+                Page Length: <a asp-action="Index" asp-route-pageSizeFilter="@ViewData["10"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">10</a>
+                <a asp-action="Index" asp-route-pageSizeFilter="@ViewData["25"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">25</a>
+                <a asp-action="Index" asp-route-pageSizeFilter="@ViewData["50"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">50</a>
             </p>
         </div>
     </form>

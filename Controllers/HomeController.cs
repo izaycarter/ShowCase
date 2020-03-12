@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using Kopis_Showcase.Interface;
+using Kopis_Showcase.Repositories;
+using Kopis_Showcase.Data;
 
 namespace Kopis_Showcase.Controllers
 {
@@ -14,15 +16,14 @@ namespace Kopis_Showcase.Controllers
     {
         private readonly IWebHostEnvironment _env;
 
-        private readonly IUploadFileRepository _upload;
+        private readonly IPersonRepository _personRepository;
 
 
-
-        public HomeController(IWebHostEnvironment env, IUploadFileRepository upload)
+        public HomeController(IWebHostEnvironment env, IPersonRepository personRepository)
         {
             _env = env;
 
-            _upload = upload;
+            _personRepository = personRepository;
         }
 
         public IActionResult Index()
@@ -54,8 +55,8 @@ namespace Kopis_Showcase.Controllers
                     xssfworkbook = new XSSFWorkbook(stream);
                 }
                 ISheet sheet = xssfworkbook.GetSheetAt(0);
+                _personRepository.ReadEachRowFromSheet(sheet);
                 
-                _upload.ReadEachRowFromSheet(sheet);
             return RedirectToAction("Index", "Person");
         }
 

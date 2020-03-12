@@ -8,7 +8,6 @@ namespace Kopis_Showcase.Models
     public class Person 
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int PersonID { get; set; }
 
         [Required]
@@ -18,22 +17,23 @@ namespace Kopis_Showcase.Models
         public string LastName { get; set; }
 
         [Required]
-        [Display(Name = "Gender")]
         public int GenderID { get; set; }
 
         [Required]
-        public Gender Gender { get; set; }
+        [Display(Name = "Gender")]
+        public virtual Gender Gender { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
         public DateTime DateOfBirth { get; set; }
 
         [Required]
-        [Display(Name = "MaritalStatus")]
+        
         public int MaritalStatusID { get; set; }
 
         [Required]
-        public MaritalStatus MaritalStatus { get; set; }
+        [Display(Name = "MaritalStatus")]
+        public virtual MaritalStatus MaritalStatus { get; set; }
 
 
         [Required]
@@ -43,6 +43,7 @@ namespace Kopis_Showcase.Models
         public string StreetAddressLine1 { get; set; }
 
         [Required]
+        [StringLength(100)]
         public string StreetAddressLine2 { get; set; }
 
         [Required]
@@ -53,11 +54,11 @@ namespace Kopis_Showcase.Models
         public string City { get; set; }
 
         [Required]
+        [StringLength(2, ErrorMessage = "State should only be two letters" )]
         public string State { get; set; }
 
         [Required]
         public string Zip { get; set; }
-
 
         
     }

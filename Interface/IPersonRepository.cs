@@ -1,17 +1,34 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Kopis_Showcase.Models;
+using NPOI.SS.UserModel;
 
 namespace Kopis_Showcase.Interface
 {
-    public interface IPersonRepository
+    public interface IPersonRepository 
     {
-        IQueryable<Person> GetPeople();
-        Person GetPerson(int? Id);
-        void CreatePerson(Person person);
-        void UpdatePerson(int Id);
-        void DeletePerson(int Id);
         IEnumerable<Gender> GetGenders();
-        IEnumerable<MaritalStatus> GetMaritalStatus();
+        IEnumerable<MaritalStatus> GetMaritalStatuses();
+        int GetGenderFromRow(string GenderName);
+        int GetMaritalStatusFromRow(string MaritalName);
+        string GetGenderNameFromId(int GenderID);
+        string GetMaritalStatusNameFromId(int MaritalStatusID);
+
+        IQueryable<Person> GetPeople();
+        Task<Person> DetailViewPerson(int? Id);
+        Person GetPerson(int? Id);
+        Person CreatePerson(Person person);
+        Person UpdatePerson(Person UpdatedPerson);
+        Person DeletePerson(int Id);
+
+        IEnumerable<Person> GetPeopleForExcel();
+        Person CreatePersonFromRow(IRow row);
+        void ReadEachRowFromSheet(ISheet sheet);
+        IWorkbook CreateEachPersonRow();
+        
+
+
     }
 }

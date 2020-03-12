@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
+using Kopis_Showcase.Repositories;
+using Kopis_Showcase.Data;
 
 namespace Kopis_Showcase.Controllers
 {
@@ -16,16 +18,19 @@ namespace Kopis_Showcase.Controllers
     {
         private readonly IWebHostEnvironment _env;
 
-        private readonly IPersonRepository _person;
+        private readonly IPersonRepository _personRepository;
 
-        public PersonController(IPersonRepository person, IWebHostEnvironment env)
+
+        public PersonController(IWebHostEnvironment env, IPersonRepository personRepository)
         {
             _env = env;
-            _person = person;
+
+            _personRepository = personRepository;
         }
 
 
         // GET: Person
+        // Fix filter to keep pageSize when sortOrder and searchString Changes
         public async Task<IActionResult> Index(
             string sortOrder,
             string currentFilter,
@@ -52,8 +57,8 @@ namespace Kopis_Showcase.Controllers
 
 
 
-            var people = from p in _person.GetPeople()
-                         select p;
+            var people = from person in _personRepository.GetPeople() select person;
+ 
 
             if (!String.IsNullOrEmpty(searchString))
             {
@@ -111,14 +116,14 @@ namespace Kopis_Showcase.Controllers
         }
         // GET: Person/Details/5
         //Figured out how to return to index with filters on pageNumber you left
-        public IActionResult Details(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
-            var thisPerson = _person.GetPerson(id);
+            
+            var thisPerson = await _personRepository.DetailViewPerson(id);
 
 
             if (thisPerson == null)
@@ -132,8 +137,8 @@ namespace Kopis_Showcase.Controllers
         //GET: Person/Create
         public IActionResult Create()
         {
-            var genders = _person.GetGenders();
-            var maritalStatus = _person.GetMaritalStatus();
+            var genders = _personRepository.GetGenders();
+            var maritalStatus = _personRepository.GetMaritalStatuses();
 
             ViewData["GenderID"] = new SelectList(genders, "GenderID", "GenderName");
             ViewData["MaritalStatusID"] = new SelectList(maritalStatus, "MaritalStatusID", "MaritalStatusName");
@@ -143,38 +148,47 @@ namespace Kopis_Showcase.Controllers
         //// POST: Person/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("PersonID,FirstName,LastName,GenderID,DateOfBirth,MaritalStatusID,EmailAddress,StreetAddressLine1,StreetAddressLine2,PhoneNumber,City,State,Zip")] Person person)
+        public  IActionResult Create(Person person)
         {
-            if (ModelState.IsValid)
+            
+            try
             {
-                _person.CreatePerson(person);
-                return RedirectToAction("Index","Details",person.PersonID);
+                 _personRepository.CreatePerson(person);
+                
+
+            }
+            catch 
+            {
+                var genders = _personRepository.GetGenders();
+                var maritalStatus = _personRepository.GetMaritalStatuses();
+
+                ViewData["GenderID"] = new SelectList(genders, "GenderID", "GenderName", person.GenderID);
+                ViewData["MaritalStatusID"] = new SelectList(maritalStatus, "MaritalStatusID", "MaritalStatusName", person.MaritalStatusID);
+                return View(person);
+
             }
 
-            var genders = _person.GetGenders();
-            var maritalStatus = _person.GetMaritalStatus();
+            return RedirectToAction("Index", "Person");
 
-            ViewData["GenderID"] = new SelectList(genders, "GenderID", "GenderName", person.GenderID);
-            ViewData["MaritalStatusID"] = new SelectList(maritalStatus, "MaritalStatusID", "MaritalStatusName", person.MaritalStatusID);
-            return View(person);
+
         }
 
         //// GET: Person/Edit/5
-        public IActionResult Edit(int? id)
+        public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var person = _person.GetPerson(id);
+            var person = _personRepository.GetPerson(id);
             if (person == null)
             {
                 return NotFound();
             }
 
-            var genders = _person.GetGenders();
-            var maritalStatus = _person.GetMaritalStatus();
+            var genders = _personRepository.GetGenders();
+            var maritalStatus = _personRepository.GetMaritalStatuses();
 
             ViewData["GenderID"] = new SelectList(genders, "GenderID", "GenderName", person.GenderID);
             ViewData["MaritalStatusID"] = new SelectList(maritalStatus, "MaritalStatusID", "MaritalStatusName", person.MaritalStatusID);
@@ -184,25 +198,29 @@ namespace Kopis_Showcase.Controllers
         // POST: Person/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, [Bind("PersonID,FirstName,LastName,GenderID,DateOfBirth,MaritalStatusID,EmailAddress,StreetAddressLine1,StreetAddressLine2,PhoneNumber,City,State,Zip")] Person person)
+        public async Task<IActionResult> Edit(Person person)
         {
-            if (id != person.PersonID)
+            
+            try
             {
-                return NotFound();
+                 _personRepository.UpdatePerson(person);
+                
             }
-
-            if (ModelState.IsValid)
+            catch
             {
-                _person.UpdatePerson(id);
-                return RedirectToAction("Index", "Details", id);
+                
+                var genders = _personRepository.GetGenders();
+                var maritalStatus = _personRepository.GetMaritalStatuses();
+
+                ViewData["GenderID"] = new SelectList(genders, "GenderID", "GenderName", person.GenderID);
+                ViewData["MaritalStatusID"] = new SelectList(maritalStatus, "MaritalStatusID", "MaritalStatusName", person.MaritalStatusID);
+                return View(person);
+
             }
+            Person updatedPerson = await _personRepository.DetailViewPerson(person.PersonID);
+            return View("Details", updatedPerson);
 
-            var genders = _person.GetGenders();
-            var maritalStatus = _person.GetMaritalStatus();
 
-            ViewData["GenderID"] = new SelectList(genders, "GenderID", "GenderName", person.GenderID);
-            ViewData["MaritalStatusID"] = new SelectList(maritalStatus, "MaritalStatusID", "MaritalStatusName", person.MaritalStatusID);
-            return View(person);
         }
 
         // GET: Person/Delete/5
@@ -213,7 +231,7 @@ namespace Kopis_Showcase.Controllers
                 return NotFound();
             }
 
-            var person = _person.GetPerson(id);
+            var person = _personRepository.GetPerson(id);
             if (person == null)
             {
                 return NotFound();
@@ -227,7 +245,7 @@ namespace Kopis_Showcase.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            _person.DeletePerson(id);
+            _personRepository.DeletePerson(id);
             return RedirectToAction(nameof(Index));
         }
 
@@ -239,58 +257,22 @@ namespace Kopis_Showcase.Controllers
             string.Format("{0}://{1}/{2}", Request.Scheme, Request.Host, sFileName);
             new FileInfo(Path.Combine(sWebRootFolder, sFileName));
             var memory = new MemoryStream();
-            var peopleList = from p in _person.GetPeople()
-            select p;
-
-            using (var file = new FileStream(Path.Combine(sWebRootFolder, sFileName), FileMode.Create, FileAccess.Write))
+            
+            using (var file = new FileStream(Path.Combine(sWebRootFolder, sFileName), FileMode.Create, FileAccess.ReadWrite))
             {
 
 
-                IWorkbook workbook;
-                workbook = new XSSFWorkbook();
-                ISheet excelSheet = workbook.CreateSheet("Person List");
-                IRow row = excelSheet.CreateRow(0);
 
-                row.CreateCell(0).SetCellValue("FirstName");
-                row.CreateCell(1).SetCellValue("LastName");
-                row.CreateCell(2).SetCellValue("Gender");
-                row.CreateCell(3).SetCellValue("DateOfBirth");
-                row.CreateCell(4).SetCellValue("MaritalStatus");
-                row.CreateCell(5).SetCellValue("EmailAddress");
-                row.CreateCell(6).SetCellValue("PhoneNumber");
-                row.CreateCell(7).SetCellValue("StreetAddressLine1");
-                row.CreateCell(8).SetCellValue("StreetAddressLine2");
-                row.CreateCell(9).SetCellValue("City");
-                row.CreateCell(10).SetCellValue("State");
-                row.CreateCell(11).SetCellValue("Zip");
+                IWorkbook workbook = _personRepository.CreateEachPersonRow();
 
-                int index = 1;
-                foreach (var person in peopleList)
-                {
-                    row = excelSheet.CreateRow(index);
-                    row.CreateCell(0).SetCellValue(person.FirstName);
-                    row.CreateCell(1).SetCellValue(person.LastName);
-                    row.CreateCell(2).SetCellValue(person.Gender.GenderName);
-                    row.CreateCell(3).SetCellValue(person.DateOfBirth.ToString("MM/dd/yyyy"));
-                    row.CreateCell(4).SetCellValue(person.MaritalStatus.MaritalStatusName);
-                    row.CreateCell(5).SetCellValue(person.EmailAddress);
-                    row.CreateCell(6).SetCellValue(person.PhoneNumber);
-                    row.CreateCell(7).SetCellValue(person.StreetAddressLine1);
-                    if (person.StreetAddressLine2 == null)
-                    {
-                        row.CreateCell(8).SetCellValue("N/A");
-                    }
-                    else
-                    {
-                        row.CreateCell(8).SetCellValue(person.StreetAddressLine2);
-                    }
-                    row.CreateCell(9).SetCellValue(person.City);
-                    row.CreateCell(10).SetCellValue(person.State);
-                    row.CreateCell(11).SetCellValue(person.Zip);
-                    index++;
-                }
+
+
+
+
                 workbook.Write(file);
             }
+
+            
             using (var stream = new FileStream(Path.Combine(sWebRootFolder, sFileName), FileMode.Open))
             {
                 await stream.CopyToAsync(memory);

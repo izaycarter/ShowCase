@@ -25,8 +25,8 @@ namespace Kopis_Showcase
             services.AddControllersWithViews();
             services.AddDbContext<SqlDbContext>(options =>
         options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddTransient<IPersonRepository,  PersonRepository>();
-            services.AddTransient<IUploadFileRepository, UploadFileRepository>();
+            services.AddTransient<IPersonRepository, PersonRepository>();
+
 
 
         }

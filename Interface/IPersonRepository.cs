@@ -17,7 +17,7 @@ namespace Kopis_Showcase.Interface
         string GetMaritalStatusNameFromId(int MaritalStatusID);
 
         IQueryable<Person> GetPeople();
-        Task<Person> DetailViewPerson(int? Id);
+        Task<Person> DetailedViewPerson(int? Id);
         Person GetPerson(int? Id);
         Person CreatePerson(Person person);
         Person UpdatePerson(Person UpdatedPerson);

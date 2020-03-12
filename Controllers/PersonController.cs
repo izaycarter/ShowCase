@@ -55,8 +55,6 @@ namespace Kopis_Showcase.Controllers
 
             ViewData["CurrentFilter"] = searchString;
 
-
-
             var people = from person in _personRepository.GetPeople() select person;
  
 
@@ -114,6 +112,9 @@ namespace Kopis_Showcase.Controllers
             //This pulls all to memoery. refactor for efficiently   
             return View(await PaginatedList<Person>.CreateAsync(people, pageNumber ?? 1, pageSize));
         }
+
+
+
         // GET: Person/Details/5
         //Figured out how to return to index with filters on pageNumber you left
         public async Task<IActionResult> Details(int? id)
@@ -123,7 +124,7 @@ namespace Kopis_Showcase.Controllers
                 return NotFound();
             }
             
-            var thisPerson = await _personRepository.DetailViewPerson(id);
+            var thisPerson = await _personRepository.DetailedViewPerson(id);
 
 
             if (thisPerson == null)
@@ -133,6 +134,7 @@ namespace Kopis_Showcase.Controllers
 
             return View(thisPerson);
         }
+
 
         //GET: Person/Create
         public IActionResult Create()
@@ -145,7 +147,9 @@ namespace Kopis_Showcase.Controllers
             return View();
         }
 
-        //// POST: Person/Create
+
+
+        // POST: Person/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public  IActionResult Create(Person person)
@@ -169,8 +173,6 @@ namespace Kopis_Showcase.Controllers
             }
 
             return RedirectToAction("Index", "Person");
-
-
         }
 
         //// GET: Person/Edit/5
@@ -178,13 +180,13 @@ namespace Kopis_Showcase.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return View("Index");
             }
 
             var person = _personRepository.GetPerson(id);
             if (person == null)
             {
-                return NotFound();
+                return View("Index");
             }
 
             var genders = _personRepository.GetGenders();
@@ -217,25 +219,27 @@ namespace Kopis_Showcase.Controllers
                 return View(person);
 
             }
-            Person updatedPerson = await _personRepository.DetailViewPerson(person.PersonID);
+            Person updatedPerson = await _personRepository.DetailedViewPerson(person.PersonID);
             return View("Details", updatedPerson);
-
 
         }
 
         // GET: Person/Delete/5
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
+            Person person;
+            try
             {
-                return NotFound();
+                person = await _personRepository.DetailedViewPerson(id);
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Index");
             }
 
-            var person = _personRepository.GetPerson(id);
-            if (person == null)
-            {
-                return NotFound();
-            }
+            
+
+            
 
             return View(person);
         }
@@ -249,6 +253,8 @@ namespace Kopis_Showcase.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+
         //change to use interface and repository
         public async Task<IActionResult> OnPostExport()
         {
@@ -260,14 +266,7 @@ namespace Kopis_Showcase.Controllers
             
             using (var file = new FileStream(Path.Combine(sWebRootFolder, sFileName), FileMode.Create, FileAccess.ReadWrite))
             {
-
-
-
                 IWorkbook workbook = _personRepository.CreateEachPersonRow();
-
-
-
-
 
                 workbook.Write(file);
             }
@@ -277,6 +276,7 @@ namespace Kopis_Showcase.Controllers
             {
                 await stream.CopyToAsync(memory);
             }
+
             memory.Position = 0;
             return File(memory, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", sFileName);
         }

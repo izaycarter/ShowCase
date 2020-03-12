@@ -21,12 +21,18 @@ namespace Kopis_Showcase.Repositories
             _context = context;
         }
 
+
+
+
+
         //List of genders of Create form
         public IEnumerable<Gender> GetGenders()
         {
             var genders = _context.Gender.ToList();
             return genders;
         }
+
+
 
         //List of maritalstatuses of Create form
         public IEnumerable<MaritalStatus> GetMaritalStatuses()
@@ -36,11 +42,28 @@ namespace Kopis_Showcase.Repositories
             return maritalStatus;
         }
 
+
+
+
+        //CRUD For Person Model___________________________________
+
         public Person CreatePerson(Person person)
         {
             _context.Persons.Add(person); 
             _context.SaveChanges();
             return person;
+
+        }
+
+
+
+        public Person UpdatePerson(Person UpdatedPerson)
+        {
+
+            var person = _context.Persons.Attach(UpdatedPerson);
+            person.State = EntityState.Modified;
+            _context.SaveChanges();
+            return UpdatedPerson;
 
         }
 
@@ -56,14 +79,18 @@ namespace Kopis_Showcase.Repositories
             return person;
         }
 
+
+
+        //People list for index view
         public IQueryable<Person> GetPeople()
         {
             var people = _context.Persons;
             return people;
-           
+
         }
 
-        public Task<Person> DetailViewPerson(int? Id)
+
+        public Task<Person> DetailedViewPerson(int? Id)
         {
             var person = _context.Persons
                 .Include(p => p.Gender)
@@ -74,7 +101,7 @@ namespace Kopis_Showcase.Repositories
             return person;
         }
 
-
+        // Gets Person for Edit View
         public Person GetPerson(int? Id)
         {
             var person = _context.Persons.Find(Id);
@@ -82,21 +109,20 @@ namespace Kopis_Showcase.Repositories
             return person;
         }
 
-        public Person UpdatePerson(Person UpdatedPerson)
-        {
+        
 
-            var person = _context.Persons.Attach(UpdatedPerson);
-            person.State = EntityState.Modified;
-            _context.SaveChanges();
-            return UpdatedPerson;
 
-        }
 
+        //Excel Methods__________________________________________
+
+        
         public IEnumerable<Person> GetPeopleForExcel()
         {
             var people = _context.Persons;
             return people;
         }
+
+
 
         public Person CreatePersonFromRow(IRow row)
         {
@@ -150,8 +176,9 @@ namespace Kopis_Showcase.Repositories
                 
             }
             return person;
-
         }
+
+
 
         public void ReadEachRowFromSheet(ISheet sheet)
         {
@@ -162,6 +189,8 @@ namespace Kopis_Showcase.Repositories
             }
             _context.SaveChanges();
         }
+
+
 
         public int GetGenderFromRow(string GenderName)
         {
@@ -229,7 +258,7 @@ namespace Kopis_Showcase.Repositories
             }
         }
 
-        //ERROR Same person in each Row for excel!
+        //Creates Excel From Person entities
         public IWorkbook CreateEachPersonRow()
         {
             var people = GetPeopleForExcel();
@@ -312,10 +341,10 @@ namespace Kopis_Showcase.Repositories
                     }
                 }
                 personIndex++;
-
-            }
-            
+            } 
             return workbook;
         }
+
+
     }
 }
